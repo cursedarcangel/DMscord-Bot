@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
+const init = require('./initiative.js');
 
 //logging in the bot
 client.login(config.token);
@@ -11,6 +12,8 @@ client.on('ready', loggedIn);
 function loggedIn() {
 	console.log('Logged in and ready to go');
 }
+
+init.initiative(client);
 
 client.on('message', message => {
 	msg = message.content
