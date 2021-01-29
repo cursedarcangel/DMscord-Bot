@@ -1,6 +1,23 @@
+const Discord = require('discord.js');
+
+function getNums(str) {
+	let output = '';
+	for (i in str) {
+		let converted = Number.parseInt(str[i]);
+		if (Number.isNaN(converted)) {
+			continue;
+		} else {
+			output += str[i];
+		}
+	}
+	return output;
+}
+
 function initiative(client) {
 
-	inits = {};
+	let inits = {};
+	let initOrder = '';
+	let newReq = true;
 
 	client.on('message', message => {
 		let msg = message.content
@@ -8,19 +25,26 @@ function initiative(client) {
 			
 			let crea = msg.split(' ');                                                   
 			crea.shift();
-			console.log(crea);
 			
 			let nam = crea[0].split(':');
 			crea.shift();
 			let name = nam[1];
 
+			let init, ac, hp = '';
+
+			init = Number.parseInt(getNums(crea[0]));
+			ac = Number.parseInt(getNums(crea[1]));
+			hp = Number.parseInt(getNums(crea[2]));
+
 			inits[name] = crea;
 
-			for (let k in inits) {
-				let v = inits[k];
-				console.log(k + '     ' + v);
-			}	
-
+			if (newReq == true) {
+				embed = new Discord.MessageEmbed()
+				.setTitle('Name  |  Init  |  AC  |  HP')
+				.setDescription(initOrder);
+				message.channel.send(embed); 
+				newReq = false;
+			}
 		}
 	});
 }
