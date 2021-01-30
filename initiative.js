@@ -15,11 +15,11 @@ function getNums(str) {
 
 function initiative(client) {
 
-	let inits = {};
 	let initOrder = '';
 	let newReq = true;
+	let mesag;
 
-	client.on('message', message => {
+	client.on('message', async message => {
 		let msg = message.content
 		if (msg.includes('!addinit')) {
 			
@@ -32,18 +32,21 @@ function initiative(client) {
 
 			let init, ac, hp = '';
 
-			init = Number.parseInt(getNums(crea[0]));
-			ac = Number.parseInt(getNums(crea[1]));
-			hp = Number.parseInt(getNums(crea[2]));
-
-			inits[name] = crea;
+			init = getNums(crea[0]);
+			ac = getNums(crea[1]);
+			hp = getNums(crea[2]);
 
 			if (newReq == true) {
+				initOrder += (name + '  |  ' + init + '  |  ' + ac + '  |  ' + hp);
 				embed = new Discord.MessageEmbed()
 				.setTitle('Name  |  Init  |  AC  |  HP')
 				.setDescription(initOrder);
-				message.channel.send(embed); 
+				mesag = await message.channel.send(embed); 
 				newReq = false;
+			} else {
+				initOrder += ('\n' + name + '  |  ' + init + '  |  ' + ac + '  |  ' + hp);
+				embed.setDescription(initOrder);
+				mesag.edit(embed);
 			}
 		}
 	});
