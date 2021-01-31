@@ -17,7 +17,8 @@ function initiative(client) {
 
 	let initOrder = '';
 	let newReq = true;
-	let mesag;
+	let mesg;
+	let inits = [];
 
 	client.on('message', async message => {
 		let msg = message.content
@@ -35,18 +36,34 @@ function initiative(client) {
 			init = getNums(crea[0]);
 			ac = getNums(crea[1]);
 			hp = getNums(crea[2]);
+			
+			let stats = [name, init, ac, hp];
 
 			if (newReq == true) {
-				initOrder += (name + '  |  ' + init + '  |  ' + ac + '  |  ' + hp);
+				inits.push(stats);
+				initOrder += (inits[0] + '  |  ' + inits[1] + '  |  ' + inits[2] + '  |  ' + inits[3]);
 				embed = new Discord.MessageEmbed()
 				.setTitle('Name  |  Init  |  AC  |  HP')
 				.setDescription(initOrder);
-				mesag = await message.channel.send(embed); 
+				mesg = await message.channel.send(embed); 
 				newReq = false;
 			} else {
-				initOrder += ('\n' + name + '  |  ' + init + '  |  ' + ac + '  |  ' + hp);
+				initOrder = '';
+				for (i = 0; i < inits.length; i++) {
+					if (Number.parseInt(init) >= inits[i][1]) {
+						inits.splice(i, 0, stats);
+						break;
+					}
+					if (i == inits.length - 1) {
+						inits.push(stats);
+						break;
+					}
+				}
+				for (i = 0; i < inits.length; i++) {
+					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
+				}
 				embed.setDescription(initOrder);
-				mesag.edit(embed);
+				mesg.edit(embed);
 			}
 		}
 	});
