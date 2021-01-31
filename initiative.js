@@ -65,6 +65,10 @@ function initiative(client) {
 				embed.setDescription(initOrder);
 				mesg.edit(embed);
 			}
+		} else if (msg.includes('!initdone')) {
+			newReq = true;
+			initOrder = '';
+			inits = [];
 		}
 	});
 }
