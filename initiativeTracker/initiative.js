@@ -119,6 +119,25 @@ function initiative(client) {
 			}
 			embed.setDescription(initOrder);
 			mesg.edit(embed);
+		} else if (msg.includes('!remove')) {
+			let affected = msg.split(' ');
+			let affName = affected[1];
+
+			for (i = 0; i < inits.length; i++) {
+				if (inits[i][0] == affName) {
+					inits.splice(i, 1);
+				}
+				if (i == inits.length - 1) {
+					message.channel.send('Please provide a valid name. (Case sensitive)');	
+				}	
+
+			initOrder = '';
+			for (i = 0; i < inits.length; i++) {
+				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
+			}
+			embed.setDescription(initOrder);
+			mesg.edit(embed);
+			}
 		}
 	});
 }
