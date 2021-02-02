@@ -18,6 +18,7 @@ function initiative(client) {
 	let initOrder = '';
 	let newReq = true;
 	let mesg;
+	let embed;
 	let inits = [];
 
 	client.on('message', async message => {
@@ -69,6 +70,55 @@ function initiative(client) {
 			newReq = true;
 			initOrder = '';
 			inits = [];
+		} else if (msg.includes('!removehp')) {
+			let target = msg.split(' ');
+			target.shift();
+
+			let tarName = target[0];
+			let amount = Number.parseInt(target[1]);
+
+			for (i = 0; i < inits.length; i++) {
+				if (inits[i][0] == tarName) {
+					let hp = Number.parseInt(inits[i][3]);
+					hp -= amount;
+					inits[i][3] = hp;
+					break;
+				}
+				if (i == inits.length - 1) {
+					message.channel.send('Please provide a valid name. (Case sensitive)');
+				}
+			}
+			initOrder = '';
+			for (i = 0; i < inits.length; i++) {
+				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
+			}
+			embed.setDescription(initOrder);
+			mesg.edit(embed);
+		} else if (msg.includes('!addhp')) {
+
+			let target = msg.split(' ');
+			target.shift();
+
+			let tarName = target[0];
+			let amount = Number.parseInt(target[1]);
+
+			for (i = 0; i < inits.length; i++) {
+				if (inits[i][0] == tarName) {
+					let hp = Number.parseInt(inits[i][3]);
+					hp += amount;
+					inits[i][3] = hp;
+					break;
+				}
+				if (i == inits.length - 1) {
+					message.channel.send('Please provide a valid name. (Case sensitive)');
+				}
+			}
+			initOrder = '';
+			for (i = 0; i < inits.length; i++) {
+				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
+			}
+			embed.setDescription(initOrder);
+			mesg.edit(embed);
 		}
 	});
 }
