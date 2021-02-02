@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
-const init = require('./initiative');
-const dice = require('./roll');
+const init = require('./initiativeTracker/initiative');
+const dice = require('./diceRoller/roll');
 
 //logging in the bot
 client.login(config.token);
