@@ -27,10 +27,9 @@ function initiative(client) {
 			
 			let crea = msg.split(' ');                                                   
 			crea.shift();
-			
-			let nam = crea[0].split(':');
+
+			let name = crea[0];
 			crea.shift();
-			let name = nam[1];
 
 			let init, ac, hp = '';
 
