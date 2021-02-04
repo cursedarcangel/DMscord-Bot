@@ -161,17 +161,17 @@ function initiative(client) {
 			mesg.edit(embed);
 		} else if (msg.includes('!next')) {
 			for (i = 0; i < inits.length; i++) {
-				if (inits[i][inits[i].length - 1] == '  <<<') {
-					inits[i].pop()
-					inits[i + 1].push('  <<<');
-					message.delete();
-					break;
-				} else if (i = inits.length - 1) {
+				if (i == inits.length - 1) {
 					inits[i].pop();
 					inits[0].push('  <<<');
 					message.delete();
 					break;
-				}
+				} else if (inits[i][inits[i].length - 1] == '  <<<') {
+					inits[i].pop()
+					inits[i + 1].push('  <<<');
+					message.delete();
+					break;
+				} 
 			}
 
 			initOrder = '';
