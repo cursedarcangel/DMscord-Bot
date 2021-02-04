@@ -41,6 +41,7 @@ function initiative(client) {
 			let stats = [name, init, ac, hp];
 
 			if (newReq == true) {
+				stats.push('  <<<');
 				inits.push(stats);
 				initOrder += (inits[0] + '  |  ' + inits[1] + '  |  ' + inits[2] + '  |  ' + inits[3]);
 				embed = new Discord.MessageEmbed()
@@ -49,7 +50,6 @@ function initiative(client) {
 				mesg = await message.channel.send(embed); 
 				newReq = false;
 			} else {
-				initOrder = '';
 				for (i = 0; i < inits.length; i++) {
 					if (Number.parseInt(init) >= inits[i][1]) {
 						inits.splice(i, 0, stats);
@@ -60,8 +60,14 @@ function initiative(client) {
 						break;
 					}
 				}
+
+				initOrder = '';
 				for (i = 0; i < inits.length; i++) {
+					if (inits[i][inits[i].length - 1] == '  <<<') {
+						initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
+					} else {
 					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
+					}
 				}
 				embed.setDescription(initOrder);
 				mesg.edit(embed);
@@ -88,9 +94,14 @@ function initiative(client) {
 					message.channel.send('Please provide a valid name. (Case sensitive)');
 				}
 			}
+
 			initOrder = '';
 			for (i = 0; i < inits.length; i++) {
+				if (inits[i][inits[i].length - 1] == '  <<<') {
+					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
+				} else {
 				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
+				}
 			}
 			embed.setDescription(initOrder);
 			mesg.edit(embed);
@@ -113,9 +124,14 @@ function initiative(client) {
 					message.channel.send('Please provide a valid name. (Case sensitive)');
 				}
 			}
+
 			initOrder = '';
 			for (i = 0; i < inits.length; i++) {
+				if (inits[i][inits[i].length - 1] == '  <<<') {
+					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
+				} else {
 				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
+				}
 			}
 			embed.setDescription(initOrder);
 			mesg.edit(embed);
@@ -126,18 +142,49 @@ function initiative(client) {
 			for (i = 0; i < inits.length; i++) {
 				if (inits[i][0] == affName) {
 					inits.splice(i, 1);
+					break;
 				}
 				if (i == inits.length - 1) {
 					message.channel.send('Please provide a valid name. (Case sensitive)');	
+					break;
 				}	
+			}
 
 			initOrder = '';
 			for (i = 0; i < inits.length; i++) {
+				if (inits[i][inits[i].length - 1] == '  <<<') {
+					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
+				} else {
 				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
+				}
 			}
 			embed.setDescription(initOrder);
 			mesg.edit(embed);
+		} else if (msg.includes('!next')) {
+			for (i = 0; i < inits.length; i++) {
+				if (inits[i][inits[i].length - 1] == '  <<<') {
+					inits[i].pop()
+					inits[i + 1].push('  <<<');
+					message.delete();
+					break;
+				} else if (i = inits.length - 1) {
+					inits[i].pop();
+					inits[0].push('  <<<');
+					message.delete();
+					break;
+				}
 			}
+
+			initOrder = '';
+			for (i = 0; i < inits.length; i++) {
+				if (inits[i][inits[i].length - 1] == '  <<<') {
+					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
+				} else {
+				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
+				}
+			}
+			embed.setDescription(initOrder);
+			mesg.edit(embed);
 		}
 	});
 }
