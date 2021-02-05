@@ -48,6 +48,7 @@ function initiative(client) {
 				.setDescription(initOrder);
 				mesg = await message.channel.send(embed); 
 				newReq = false;
+				message.delete();
 			} else {
 				for (i = 0; i < inits.length; i++) {
 					if (Number.parseInt(init) >= inits[i][1]) {
@@ -70,11 +71,14 @@ function initiative(client) {
 				}
 				embed.setDescription(initOrder);
 				mesg.edit(embed);
+				message.delete();
 			}
 		} else if (msg.includes('!initdone')) {
 			newReq = true;
 			initOrder = '';
 			inits = [];
+			message.delete();
+			mesg.delete();
 		} else if (msg.includes('!removehp')) {
 			let target = msg.split(' ');
 			target.shift();
@@ -104,6 +108,7 @@ function initiative(client) {
 			}
 			embed.setDescription(initOrder);
 			mesg.edit(embed);
+			message.delete();
 		} else if (msg.includes('!addhp')) {
 
 			let target = msg.split(' ');
@@ -134,6 +139,7 @@ function initiative(client) {
 			}
 			embed.setDescription(initOrder);
 			mesg.edit(embed);
+			message.delete();
 		} else if (msg.includes('!remove')) {
 			let affected = msg.split(' ');
 			let affName = affected[1];
@@ -159,6 +165,7 @@ function initiative(client) {
 			}
 			embed.setDescription(initOrder);
 			mesg.edit(embed);
+			message.delete();
 		} else if (msg.includes('!next')) {
 			for (i = 0; i < inits.length; i++) {
 				if (i == inits.length - 1) {
