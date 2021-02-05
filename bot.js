@@ -3,6 +3,7 @@ const client = new Discord.Client();
 const config = require('./config.json');
 const init = require('./initiativeTracker/initiative');
 const dice = require('./diceRoller/roll');
+const help = require('./help');
 
 //logging in the bot
 client.login(config.token);
@@ -17,3 +18,5 @@ function loggedIn() {
 init.initiative(client);
 
 dice.roll(client);
+
+help.helpMe(client);

@@ -4,7 +4,7 @@ function roll(client) {
         let name = message.author.username
 
         //dice roller
-        if (msg.includes('!roll')) {
+        if (msg.startsWith('!roll')) {
                 let inpt = msg.split('d');
                 let roll = inpt[1];
                 if (roll.includes('+')) {

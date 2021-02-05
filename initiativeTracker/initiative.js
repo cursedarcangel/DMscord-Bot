@@ -23,7 +23,7 @@ function initiative(client) {
 
 	client.on('message', async message => {
 		let msg = message.content
-		if (msg.includes('!addinit')) {
+		if (msg.startsWith('!addinit')) {
 			
 			let crea = msg.split(' ');                                                   
 			crea.shift();
@@ -73,13 +73,13 @@ function initiative(client) {
 				mesg.edit(embed);
 				message.delete();
 			}
-		} else if (msg.includes('!initdone')) {
+		} else if (msg.startsWith('!initdone')) {
 			newReq = true;
 			initOrder = '';
 			inits = [];
 			message.delete();
 			mesg.delete();
-		} else if (msg.includes('!removehp')) {
+		} else if (msg.startsWith('!removehp')) {
 			let target = msg.split(' ');
 			target.shift();
 
@@ -109,7 +109,7 @@ function initiative(client) {
 			embed.setDescription(initOrder);
 			mesg.edit(embed);
 			message.delete();
-		} else if (msg.includes('!addhp')) {
+		} else if (msg.startsWith('!addhp')) {
 
 			let target = msg.split(' ');
 			target.shift();
@@ -140,7 +140,7 @@ function initiative(client) {
 			embed.setDescription(initOrder);
 			mesg.edit(embed);
 			message.delete();
-		} else if (msg.includes('!remove')) {
+		} else if (msg.startsWith('!remove')) {
 			let affected = msg.split(' ');
 			let affName = affected[1];
 
@@ -166,7 +166,7 @@ function initiative(client) {
 			embed.setDescription(initOrder);
 			mesg.edit(embed);
 			message.delete();
-		} else if (msg.includes('!next')) {
+		} else if (msg.startsWith('!next')) {
 			for (i = 0; i < inits.length; i++) {
 				if (i == inits.length - 1) {
 					inits[i].pop();
