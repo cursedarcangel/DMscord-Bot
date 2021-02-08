@@ -7,9 +7,11 @@ function magicItemTracker(client) {
 		if (msg.startsWith('!additem')) {
 			let item = msg.substr(9);
 			item = item.split(' | ');
-			let ymlItem = yaml.dump(item);
-
-			fs.writeFile('./magicItemTracker/items.yaml', ymlItem, () => {});
+			itemDict = {};
+			itemDict[item[0]] = item;
+			let ymlItem = yaml.dump(itemDict);
+			itemDict = ''
+			fs.appendFile('./magicItemTracker/items.yaml', ymlItem, () => {});
 		}
 	});
 }
