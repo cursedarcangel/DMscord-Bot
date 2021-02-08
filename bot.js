@@ -4,6 +4,7 @@ const config = require('./config.json');
 const init = require('./initiativeTracker/initiative');
 const dice = require('./diceRoller/roll');
 const help = require('./help');
+const magic = require('./magicItemTracker/magicTrack');
 
 //logging in the bot
 client.login(config.token);
@@ -20,3 +21,5 @@ init.initiative(client);
 dice.roll(client);
 
 help.helpMe(client);
+
+magic.magicItemTracker(client);
