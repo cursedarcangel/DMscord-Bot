@@ -11,7 +11,7 @@ function magicItemTracker(client) {
 			let item = msg.substr(9);
 			item = item.split(' | ');
 			itemDict = {};
-			itemDict[item[0]] = item;
+			itemDict[item[0].toLowerCase()] = item;
 			let ymlItem = yaml.dump(itemDict);
 			itemDict = ''
 			fs.appendFile('./magicItemTracker/items.yml', ymlItem, () => {});
