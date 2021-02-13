@@ -14,7 +14,7 @@ function magicItemTracker(client) {
 			itemDict[item[0].toLowerCase()] = item;
 			let ymlItem = yaml.dump(itemDict);
 			itemDict = ''
-			fs.appendFile('./magicItemTracker/items.yml', ymlItem, () => {});
+			fs.appendFile('./magicItemTracker/items.yml', ymlItem, (err) => {if (err) {message.channel.send('Sorry, couldnt add that item. There is probably another item with that name. Try giving the item a different name.')}});
 		} else if (msg.startsWith('!searchitem')) {
 			let items = fs.readFileSync('./magicItemTracker/items.yml', () => {});
 			items = yaml.load(items);

@@ -13,8 +13,8 @@ function statTracker(client) {
 			}
 			charDict = {};
 			charDict[stats[0][1]] = stats;
-			console.log(yaml.dump(charDict));
-			fs.appendFile('./statBlockTracker/stats.yml', yaml.dump(charDict), () => {});
+			fs.appendFile('./statBlockTracker/stats.yml', yaml.dump(charDict), (err) => {message.channel.send('Sorry, couldnt add those stats. There is probably another stat block with that name. Try renaming the stats')});
+			charDict = '';
 		} else if (msg.startsWith('!searchstat')) {
 			let search = msg.substr(12).toLowerCase();
 			stats = fs.readFileSync('./statBlockTracker/stats.yml', () => {});
