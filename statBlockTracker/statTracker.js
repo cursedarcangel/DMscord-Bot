@@ -1,5 +1,6 @@
 const yaml = require('js-yaml');
 const fs = require('fs');
+const Discord = require('discord.js');
 
 function statTracker(client) {
 	client.on('message', message => {
@@ -11,9 +12,20 @@ function statTracker(client) {
 				stats[i] = stats[i].split(':');
 			}
 			charDict = {};
-			charDict[stats[0][0]] = stats;
+			charDict[stats[0][1]] = stats;
 			console.log(yaml.dump(charDict));
 			fs.appendFile('./statBlockTracker/stats.yml', yaml.dump(charDict), () => {});
+		} else if (msg.startsWith('!searchstat')) {
+			let search = msg.substr(12).toLowerCase();
+			stats = fs.readFileSync('./statBlockTracker/stats.yml', () => {});
+			stats = yaml.load(stats);
+			searchstat = stats[search];
+			let embed = new Discord.MessageEmbed()
+			.setTitle(searchstat[0][1]);
+			for (i = 0; i < searchstat.length; i++) {
+				embed.addField(searchstat[i][0], searchstat[i][1], true);	
+			}
+			message.channel.send(embed);
 		}
 	});
 }
