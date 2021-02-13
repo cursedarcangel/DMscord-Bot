@@ -27,7 +27,6 @@ function magicItemTracker(client) {
 			item.pop();
 			let arr = [descr, desc];
 			item.push(arr);
-			console.log(item);
 			itemDict = {};
 			itemDict[item[0][1].toLowerCase()] = item;
 			let ymlItem = yaml.dump(itemDict);
@@ -39,10 +38,10 @@ function magicItemTracker(client) {
 			let search = msg.substr(12).toLowerCase();
 			let item = items[search];
 			embed = new Discord.MessageEmbed()
-			.setTitle(item[0])
+			.setTitle(item[0][1])
 			.addFields(
-				{ name: 'Rarity', value: item[1] },
-				{ name: 'Description', value: item[2] }
+				{ name: 'Rarity', value: item[1][1] },
+				{ name: 'Description', value: item[2][1] }
 			);
 			message.channel.send(embed);
 		}
