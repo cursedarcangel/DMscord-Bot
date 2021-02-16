@@ -26,6 +26,26 @@ function statTracker(client) {
 				embed.addField(searchstat[i][0], searchstat[i][1], true);	
 			}
 			message.channel.send(embed);
+		} else if (msg.startsWith('!editstat')) {
+			let affected = msg.substr(10);
+			affected = affected.split(' ');
+			let affName = affected[0];
+			affected.shift();
+			params = affected;
+			statBlocks = fs.readFileSync('./statBlockTracker/stats.yml', () => {});
+			statBlocks = yaml.load(statBlocks);
+			oldStat = statBlocks[affName];
+			newStat = oldStat;
+			for (i = 0; i < oldStat.length; i++) {
+				for (j = 0; j < params.length; j++) {
+					param = params[j].split(':');
+					if (oldStat[i][0].toLowerCase() == param[0].toLowerCase()) {
+						newStat[i][1] = param[1];
+					}
+				}
+			}
+			statBlocks[affName] = newStat;
+			fs.writeFile('./statBlockTracker/stats.yml', yaml.dump(statBlocks), () => {});
 		}
 	});
 }
