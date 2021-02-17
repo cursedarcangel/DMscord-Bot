@@ -44,6 +44,25 @@ function magicItemTracker(client) {
 				{ name: 'Description', value: item[2][1] }
 			);
 			message.channel.send(embed);
+		} else if (msg.startsWith('!edititem')) {
+			let affected = msg.substr(10);
+			affected = affected.split(' ');
+                        let affName = affected[0];
+                        affected.shift();
+                        params = affected;
+			params = params.join(' ');
+                        items = fs.readFileSync('./magicItemTracker/items.yml', () => {});
+                        items = yaml.load(items);
+                        oldItem = items[affName];
+                        newItem = oldItem;
+			params = params.split(':');
+                        for (i = 0; i < oldItem.length; i++) {
+				if (oldItem[i][0].toLowerCase() == params[0].toLowerCase()) {
+					newItem[i][1] = params[1];
+				}
+                        }
+                        items[affName] = newItem;
+                        fs.writeFile('./magicItemTracker/items.yml', yaml.dump(items), () => {});
 		}
 	});
 }
