@@ -1,4 +1,6 @@
 const Discord = require('discord.js');
+const yaml = require('js-yaml');
+const fs = require('fs');
 
 function getNums(str) {
 	let output = '';
@@ -23,7 +25,7 @@ function initiative(client) {
 
 	client.on('message', async message => {
 		let msg = message.content
-		if (msg.startsWith('!addinit')) {
+		if (msg.startsWith('!addinit ')) {
 			
 			let crea = msg.split(' ');                                                   
 			crea.shift();
@@ -191,6 +193,61 @@ function initiative(client) {
 			}
 			embed.setDescription(initOrder);
 			mesg.edit(embed);
+		} else if (msg.startsWith('!addinitstat')) {
+			let ac;
+			let hp;
+			let addedCrea = msg.split(' ');
+			addedCrea.shift();
+			let statBlocks = yaml.load(fs.readFileSync('./statBlockTracker/stats.yml', () => {}));
+			let statblock = statBlocks[addedCrea[0]];
+			let name = addedCrea[1];
+			let init = Math.floor(Math.random() * 20) + 1;
+			for (i = 0; i < statblock.length; i++) {
+				if (statblock[i][0].toLowerCase() == 'ac') {
+					ac = statblock[i][1];		
+				}
+			}
+			for (i = 0; i < statblock.length; i++) {
+				if (statblock[i][0].toLowerCase() == 'hp') {
+					hp = statblock[i][1];
+				}
+			}
+			let stats = [name, init, ac, hp];
+
+			if (newReq == true) {
+				stats.push('  <<<');
+				inits.push(stats);
+				initOrder += (inits[0] + '  |  ' + inits[1] + '  |  ' + inits[2] + '  |  ' + inits[3]);
+				embed = new Discord.MessageEmbed()
+				.setTitle('Name  |  Init  |  AC  |  HP')
+				.setDescription(initOrder);
+				mesg = await message.channel.send(embed); 
+				newReq = false;
+				message.delete();
+			} else {
+				for (i = 0; i < inits.length; i++) {
+					if (Number.parseInt(init) >= inits[i][1]) {
+						inits.splice(i, 0, stats);
+						break;
+					}
+					if (i == inits.length - 1) {
+						inits.push(stats);
+						break;
+					}
+				}
+
+				initOrder = '';
+				for (i = 0; i < inits.length; i++) {
+					if (inits[i][inits[i].length - 1] == '  <<<') {
+						initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
+					} else {
+					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
+					}
+				}
+				embed.setDescription(initOrder);
+				mesg.edit(embed);
+				message.delete();
+			}
 		}
 	});
 }
