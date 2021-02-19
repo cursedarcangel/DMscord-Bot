@@ -14,6 +14,26 @@ function getNums(str) {
 	}
 	return output;
 }
+function findMod(num) {
+        if (num >= 10) {
+                num = num - 10;
+                num = num / 2;
+                let mod = Math.floor(num);
+        } else {
+                if (num == 9 || num == 8) {
+                        let mod = -1;
+                } else if (num == 7 || num == 6) {
+                        let mod = -2;
+                } else if (num == 5 || num == 4) {
+                        let mod = -3;
+                } else if (num == 3 || num == 2) {
+                        let mod = -4;
+                } else {
+                        let mod = -5;
+                }
+        }
+        return mod;
+}
 
 function initiative(client) {
 
@@ -195,6 +215,7 @@ function initiative(client) {
 			mesg.edit(embed);
 		} else if (msg.startsWith('!addinitstat')) {
 			let ac;
+			let initmod;
 			let hp;
 			let addedCrea = msg.split(' ');
 			addedCrea.shift();
@@ -203,13 +224,22 @@ function initiative(client) {
 			let name = addedCrea[1];
 			let init = Math.floor(Math.random() * 20) + 1;
 			for (i = 0; i < statblock.length; i++) {
+				if (statblock[i][0].toLowerCase().startsWith('init')) {
+					initmod = statblock[i][1];
+					break;
+				}
+			}
+			init += initmod;
+			for (i = 0; i < statblock.length; i++) {
 				if (statblock[i][0].toLowerCase() == 'ac') {
 					ac = statblock[i][1];		
+					break;
 				}
 			}
 			for (i = 0; i < statblock.length; i++) {
 				if (statblock[i][0].toLowerCase() == 'hp') {
 					hp = statblock[i][1];
+					break;
 				}
 			}
 			let stats = [name, init, ac, hp];
