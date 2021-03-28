@@ -278,6 +278,25 @@ function initiative(client) {
 				mesg.edit(embed);
 				message.delete();
 			}
+		} else if (msg.startsWith('!first')) {
+			for (i=0; i < inits.length; i++) {
+				if (inits[i][inits[i].length - 1] == '  <<<') {
+					inits[i].pop();
+					inits[0].push('  <<<');
+					break;
+				}
+			}
+			initOrder = '';
+			for (i = 0; i < inits.length; i++) {
+				if (inits[i][inits[i].length - 1] == '  <<<') {
+					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
+				} else {
+				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
+				}
+			}
+			embed.setDescription(initOrder);
+			mesg.edit(embed);
+			message.delete();
 		}
 	});
 }
