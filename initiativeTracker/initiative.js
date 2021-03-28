@@ -162,12 +162,19 @@ function initiative(client) {
 			embed.setDescription(initOrder);
 			mesg.edit(embed);
 			message.delete();
-		} else if (msg.startsWith('!remove')) {
+		} else if (msg.startsWith('!removeinit')) {
 			let affected = msg.split(' ');
 			let affName = affected[1];
 
 			for (i = 0; i < inits.length; i++) {
 				if (inits[i][0] == affName) {
+					if (inits[i][inits[i].length - 1] == '  <<<') {
+						if ((i + 1) >= inits.length) {
+							inits[0].push('  <<<');
+						} else {
+							inits[i + 1].push('  <<<');
+						}
+					}
 					inits.splice(i, 1);
 					break;
 				}
