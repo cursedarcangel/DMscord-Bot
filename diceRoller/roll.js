@@ -8,7 +8,7 @@ function roll(client) {
                 // dice roller
                 if (msg.startsWith('!roll')) {
                         msg.split(/\s+/).slice(1).forEach((roll_string) => {
-                                process_roll(roll_string, name, message.channel.send)
+                                process_roll(roll_string, name, (res) => message.channel.send(res))
                         })
                 }
         });
