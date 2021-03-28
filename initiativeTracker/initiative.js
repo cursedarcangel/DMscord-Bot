@@ -2,46 +2,49 @@ const Discord = require('discord.js');
 const yaml = require('js-yaml');
 const fs = require('fs');
 
-function getNums(str) {
-	let output = '';
-	for (i in str) {
-		let converted = Number.parseInt(str[i]);
-		if (Number.isNaN(converted)) {
-			continue;
-		} else {
-			output += str[i];
+// all the state we need...
+// consider making into something per-channel if possible
+let embed, mesg
+let inits = [];
+let init_index = 0;
+
+function render_inits() {
+	let result = ''
+	for (let i = 0; i < inits.length; i++) {
+		result += inits[i].join(' | ');
+		if (i == init_index) {
+			result += ' <<<';
+		}
+		result += '\n';
+	}
+	return result;
+}
+
+async function add_initiative(message, name, initiative, ac, hp) {
+	if (inits.length == 0) {
+		embed = new Discord.MessageEmbed()
+			.setTitle('Name  |  Init  |  AC  |  HP')
+			.setDescription('');
+		mesg = await message.channel.send(embed); 
+	}
+
+	// inits should be kept in-order at all times, so we can insert in-order
+	// TODO- to properly handle ties, should look at dex bonus... then randomize
+	let inserted = false;
+	for (let i = 0; i < inits.length; i++) {
+		if (initiative >= inits[i][1]) {
+			inits.splice(i, 0, [name, initiative, ac, hp]);
+			inserted = true;
+			if (i < init_index) { init_index++ }
+			break;
 		}
 	}
-	return output;
-}
-function findMod(num) {
-        if (num >= 10) {
-                num = num - 10;
-                num = num / 2;
-                let mod = Math.floor(num);
-        } else {
-                if (num == 9 || num == 8) {
-                        let mod = -1;
-                } else if (num == 7 || num == 6) {
-                        let mod = -2;
-                } else if (num == 5 || num == 4) {
-                        let mod = -3;
-                } else if (num == 3 || num == 2) {
-                        let mod = -4;
-                } else {
-                        let mod = -5;
-                }
-        }
-        return mod;
+	if (!inserted) {
+		inits.push([name, initiative, ac, hp]);
+	}
 }
 
 function initiative(client) {
-
-	let initOrder = '';
-	let newReq = true;
-	let mesg;
-	let embed;
-	let inits = [];
 
 	client.on('message', async message => {
 		let msg = message.content
@@ -55,46 +58,14 @@ function initiative(client) {
 
 			let init, ac, hp = '';
 
-			init = getNums(crea[0]);
-			ac = getNums(crea[1]);
-			hp = getNums(crea[2]);
+			init = +crea[0];
+			ac = +crea[1];
+			hp = +crea[2];
 			
-			let stats = [name, init, ac, hp];
-
-			if (newReq == true) {
-				stats.push('  <<<');
-				inits.push(stats);
-				initOrder += (inits[0] + '  |  ' + inits[1] + '  |  ' + inits[2] + '  |  ' + inits[3]);
-				embed = new Discord.MessageEmbed()
-				.setTitle('Name  |  Init  |  AC  |  HP')
-				.setDescription(initOrder);
-				mesg = await message.channel.send(embed); 
-				newReq = false;
-				message.delete();
-			} else {
-				for (i = 0; i < inits.length; i++) {
-					if (Number.parseInt(init) >= inits[i][1]) {
-						inits.splice(i, 0, stats);
-						break;
-					}
-					if (i == inits.length - 1) {
-						inits.push(stats);
-						break;
-					}
-				}
-
-				initOrder = '';
-				for (i = 0; i < inits.length; i++) {
-					if (inits[i][inits[i].length - 1] == '  <<<') {
-						initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
-					} else {
-					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
-					}
-				}
-				embed.setDescription(initOrder);
-				mesg.edit(embed);
-				message.delete();
-			}
+			await add_initiative(message, name, init, ac, hp);
+			embed.setDescription(render_inits());
+			mesg.edit(embed);
+			message.delete();
 		} else if (msg.startsWith('!initdone')) {
 			newReq = true;
 			initOrder = '';
@@ -120,15 +91,7 @@ function initiative(client) {
 				}
 			}
 
-			initOrder = '';
-			for (i = 0; i < inits.length; i++) {
-				if (inits[i][inits[i].length - 1] == '  <<<') {
-					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
-				} else {
-				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
-				}
-			}
-			embed.setDescription(initOrder);
+			embed.setDescription(render_inits())
 			mesg.edit(embed);
 			message.delete();
 		} else if (msg.startsWith('!addhp')) {
@@ -151,15 +114,7 @@ function initiative(client) {
 				}
 			}
 
-			initOrder = '';
-			for (i = 0; i < inits.length; i++) {
-				if (inits[i][inits[i].length - 1] == '  <<<') {
-					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
-				} else {
-				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
-				}
-			}
-			embed.setDescription(initOrder);
+			embed.setDescription(render_inits())
 			mesg.edit(embed);
 			message.delete();
 		} else if (msg.startsWith('!removeinit')) {
@@ -168,14 +123,8 @@ function initiative(client) {
 
 			for (i = 0; i < inits.length; i++) {
 				if (inits[i][0] == affName) {
-					if (inits[i][inits[i].length - 1] == '  <<<') {
-						if ((i + 1) >= inits.length) {
-							inits[0].push('  <<<');
-						} else {
-							inits[i + 1].push('  <<<');
-						}
-					}
 					inits.splice(i, 1);
+					if (i < init_index) { init_index-- }
 					break;
 				}
 				if (i == inits.length - 1) {
@@ -184,59 +133,34 @@ function initiative(client) {
 				}	
 			}
 
-			initOrder = '';
-			for (i = 0; i < inits.length; i++) {
-				if (inits[i][inits[i].length - 1] == '  <<<') {
-					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
-				} else {
-				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
-				}
-			}
-			embed.setDescription(initOrder);
+			embed.setDescription(render_inits())
 			mesg.edit(embed);
 			message.delete();
 		} else if (msg.startsWith('!next')) {
-			for (i = 0; i < inits.length; i++) {
-				if (i == inits.length - 1) {
-					inits[i].pop();
-					inits[0].push('  <<<');
-					message.delete();
-					break;
-				} else if (inits[i][inits[i].length - 1] == '  <<<') {
-					inits[i].pop()
-					inits[i + 1].push('  <<<');
-					message.delete();
-					break;
-				} 
-			}
-
-			initOrder = '';
-			for (i = 0; i < inits.length; i++) {
-				if (inits[i][inits[i].length - 1] == '  <<<') {
-					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
-				} else {
-				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
-				}
-			}
-			embed.setDescription(initOrder);
+			init_index++;
+			if (init_index >= inits.length) { init_index = 0 }
+			embed.setDescription(render_inits())
 			mesg.edit(embed);
+			message.delete();
 		} else if (msg.startsWith('!addinitstat')) {
 			let ac;
 			let initmod;
 			let hp;
 			let addedCrea = msg.split(' ');
 			addedCrea.shift();
-			let statBlocks = yaml.load(fs.readFileSync('./statBlockTracker/stats.yml', () => {}));
+			
+			let statBlocks = yaml.load(await fs.readFile('./statBlockTracker/stats.yml'));
 			let statblock = statBlocks[addedCrea[0]];
 			let name = addedCrea[1];
 			let init = Math.floor(Math.random() * 20) + 1;
+			// TODO: consider making statblock a dictionary instead of list of lists
 			for (i = 0; i < statblock.length; i++) {
 				if (statblock[i][0].toLowerCase().startsWith('init')) {
 					initmod = statblock[i][1];
+					init += initmod;
 					break;
 				}
 			}
-			init += initmod;
 			for (i = 0; i < statblock.length; i++) {
 				if (statblock[i][0].toLowerCase() == 'ac') {
 					ac = statblock[i][1];		
@@ -249,59 +173,13 @@ function initiative(client) {
 					break;
 				}
 			}
-			let stats = [name, init, ac, hp];
-
-			if (newReq == true) {
-				stats.push('  <<<');
-				inits.push(stats);
-				initOrder += (inits[0] + '  |  ' + inits[1] + '  |  ' + inits[2] + '  |  ' + inits[3]);
-				embed = new Discord.MessageEmbed()
-				.setTitle('Name  |  Init  |  AC  |  HP')
-				.setDescription(initOrder);
-				mesg = await message.channel.send(embed); 
-				newReq = false;
-				message.delete();
-			} else {
-				for (i = 0; i < inits.length; i++) {
-					if (Number.parseInt(init) >= inits[i][1]) {
-						inits.splice(i, 0, stats);
-						break;
-					}
-					if (i == inits.length - 1) {
-						inits.push(stats);
-						break;
-					}
-				}
-
-				initOrder = '';
-				for (i = 0; i < inits.length; i++) {
-					if (inits[i][inits[i].length - 1] == '  <<<') {
-						initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
-					} else {
-					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
-					}
-				}
-				embed.setDescription(initOrder);
-				mesg.edit(embed);
-				message.delete();
-			}
+			await add_initiative(message, name, init, ac, hp);
+			embed.setDescription(render_inits())
+			mesg.edit(embed);
+			message.delete();
 		} else if (msg.startsWith('!first')) {
-			for (i=0; i < inits.length; i++) {
-				if (inits[i][inits[i].length - 1] == '  <<<') {
-					inits[i].pop();
-					inits[0].push('  <<<');
-					break;
-				}
-			}
-			initOrder = '';
-			for (i = 0; i < inits.length; i++) {
-				if (inits[i][inits[i].length - 1] == '  <<<') {
-					initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3] + '  <<<');
-				} else {
-				initOrder += ('\n' + inits[i][0] + '  |  ' + inits[i][1] + '  |  ' + inits[i][2] + '  |  ' + inits[i][3]);
-				}
-			}
-			embed.setDescription(initOrder);
+			init_index = 0;
+			embed.setDescription(render_inits())
 			mesg.edit(embed);
 			message.delete();
 		}
