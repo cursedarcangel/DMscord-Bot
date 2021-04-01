@@ -32,10 +32,17 @@ function process_roll(roll_string, user = 'test_user', msg_callback = console.lo
 			} else {
 				selected = Math.max(sum1, sum2);
 			}
-			msg_callback(`${user}'s rolls: ${rolls} + ${mod} = ${sum1}  |  ${roll2} + ${mod} = ${sum2}  |  -> ${selected}`);
-
+			if (rolls.length + roll2.length >= 500) {
+				msg_callback(`${user}'s roll total: ${selected}`);
+			} else {
+				msg_callback(`${user}'s rolls: ${rolls} + ${mod} = ${sum1}  |  ${roll2} + ${mod} = ${sum2}  |  -> ${selected}`);
+			}
 		} else {
-			msg_callback(`${user}'s roll: ${rolls} + ${mod} = ${rolls.reduce((a,b) => a+b, mod)}`);
+			if (rolls.length >= 500) {
+				msg_callback(`${user}'s roll total: ${rolls.reduce((a, b) => a+b, mod)}`);
+			} else {
+				msg_callback(`${user}'s roll: ${rolls} + ${mod} = ${rolls.reduce((a,b) => a+b, mod)}`);
+			}
 		}
         } else {
                 console.log(`ERROR in roll: ${roll_string}`)
