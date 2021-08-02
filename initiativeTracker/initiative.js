@@ -8,6 +8,18 @@ let embed, mesg
 let inits = [];
 let init_index = 0;
 
+function dexMod(dex) {
+	if (Number.isInteger((dex - 10) / 2)) {
+		return(((dex - 10) / 2))
+	} else {
+		return(Math.floor((dex - 10) / 2))
+	}
+}
+
+function roll(dex) {
+	return(Math.floor(Math.random() * 20) + 1 + dexMod(dex))
+}
+
 function render_inits() {
 	let result = ''
 	for (let i = 0; i < inits.length; i++) {
@@ -136,13 +148,13 @@ function initiative(client) {
 			embed.setDescription(render_inits())
 			mesg.edit(embed);
 			message.delete();
-		} else if (msg.startsWith('!next')) {
+		} else if (msg.startsWith('!next ')) {
 			init_index++;
 			if (init_index >= inits.length) { init_index = 0 }
 			embed.setDescription(render_inits())
 			mesg.edit(embed);
 			message.delete();
-		} else if (msg.startsWith('!addinitstat')) {
+		} else if (msg.startsWith('!addinitstat ')) {
 			let ac;
 			let initmod;
 			let hp;
@@ -177,10 +189,33 @@ function initiative(client) {
 			embed.setDescription(render_inits())
 			mesg.edit(embed);
 			message.delete();
-		} else if (msg.startsWith('!first')) {
+		} else if (msg.startsWith('!first ')) {
 			init_index = 0;
 			embed.setDescription(render_inits())
 			mesg.edit(embed);
+			message.delete();
+		} else if (msg.startsWith('!addinits ')) {
+			let crea = msg.split(' ');
+			let amount = crea[crea.length - 1];
+			crea.pop();
+			crea.shift();
+			let name = crea[0];
+			let const_name = name
+			crea.shift();
+			for (i = 0; i < amount; i++) {
+
+				name = const_name + String(i + 1);
+
+				let init, ac, hp = '';
+
+				init = roll(+crea[0]);
+				ac = +crea[1];
+				hp = +crea[2];
+				
+				await add_initiative(message, name, init, ac, hp);
+				embed.setDescription(render_inits());
+				mesg.edit(embed);
+			}
 			message.delete();
 		}
 	});
