@@ -60,7 +60,7 @@ function initiative(client) {
 
 	client.on('message', async message => {
 		let msg = message.content
-		if (msg.startsWith('!addinit ')) {
+		if (msg.startsWith('!addinit')) {
 			
 			let crea = msg.split(' ');                                                   
 			crea.shift();
@@ -148,13 +148,13 @@ function initiative(client) {
 			embed.setDescription(render_inits())
 			mesg.edit(embed);
 			message.delete();
-		} else if (msg.startsWith('!next ')) {
+		} else if (msg.startsWith('!next')) {
 			init_index++;
 			if (init_index >= inits.length) { init_index = 0 }
 			embed.setDescription(render_inits())
 			mesg.edit(embed);
 			message.delete();
-		} else if (msg.startsWith('!addinitstat ')) {
+		} else if (msg.startsWith('!addinitstat')) {
 			let ac;
 			let initmod;
 			let hp;
@@ -189,12 +189,12 @@ function initiative(client) {
 			embed.setDescription(render_inits())
 			mesg.edit(embed);
 			message.delete();
-		} else if (msg.startsWith('!first ')) {
+		} else if (msg.startsWith('!first')) {
 			init_index = 0;
 			embed.setDescription(render_inits())
 			mesg.edit(embed);
 			message.delete();
-		} else if (msg.startsWith('!addinits ')) {
+		} else if (msg.startsWith('!addinits')) {
 			let crea = msg.split(' ');
 			let amount = crea[crea.length - 1];
 			crea.pop();
