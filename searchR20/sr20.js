@@ -20,17 +20,6 @@ function sr20(client) {
 						info[i][0] = info[i][0].slice(5);
 					}
 					embed.addField(info[i][0], info[i][1], true);        
-                                        //embed.addField(info[i-1][0], info[i- 1][1], true);
-					//if (info[i][0][4] == '-') {
-					//	let k = info[i][0].slice(5);
-					//	embed.addField(k, info[i][1], true);
-					//} else if (info[i - 1][0][4]) {	
-					//	let k = info[i][0].slice(5);
-					//	embed.addField(k, info[i-1][1], true);
-					//} else {
-					//	embed.addField(info[i][0], info[i][1], true);
-					//	embed.addField(info[i-1][0], info[i- 1][1], true);
-					//}
 				}
 				message.channel.send(embed);
 			})
